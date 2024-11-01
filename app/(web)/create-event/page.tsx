@@ -54,12 +54,21 @@ export default function CreateEvent() {
     const onSubmit = async (data: EventFormData) => {
         try{
             const tagsArray = data.tags ? data.tags.split(",").map(tag => tag.trim()) : [];
+            const isoDate = new Date(data.date).toISOString() //This was the error🥱
             const eventData = {
-                ...data,
-                tags: tagsArray, // Replace the tags string with the array
+                title: data.title,
+                slug: data.slug,
+                description: data.description,
+                date: isoDate,
+                time: data.time,
+                location: data.location,
+                organizer: data.organizer,
+                organizerUrl: data.organizerUrl,
+                seats: data.seats,
+                tags: tagsArray,
+                bannerUrl: data.bannerUrl,
             };
             const response = await createEvent(eventData);
-            console.log(response)
             alert('Event created')
         }catch (error) {
             console.log(error)
