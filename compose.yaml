@@ -1,0 +1,14 @@
+
+services:
+  db:
+    image: postgres
+    container_name: prisma_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=devkiki
+      - POSTGRES_PASSWORD=devkiki77
+      - POSTGRES_DB=event_management
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'

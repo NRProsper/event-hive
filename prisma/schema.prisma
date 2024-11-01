@@ -1,0 +1,58 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Event model
+model Event {
+  id           Int       @id @default(autoincrement())
+  title        String    @db.VarChar(255)
+  slug         String    @unique @db.VarChar(255)
+  description  String    @db.Text
+  date         DateTime
+  time         String    @db.VarChar(20)
+  location     String    @db.VarChar(255)
+  organizer    String    @db.VarChar(255)
+  organizerUrl String?
+  seats        Int
+  tags         String[]  @db.Text
+  bannerUrl    String?   @db.VarChar(255)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  bookings     Booking[]
+}
+
+// User model
+model User {
+  id  Int @id @default(autoincrement())
+  firstName String @db.VarChar(255)
+  lastName  String @db.VarChar(255)
+  email String @unique @db.VarChar(255)
+  role  Role @default(USER)
+}
+
+//Booking model
+model Booking {
+  id        Int       @id @default(autoincrement())
+  eventId   Int
+  name      String    @db.VarChar(255)
+  email     String    @db.VarChar(255)
+  seats     Int
+  phone     String   @db.VarChar(20)
+  createdAt DateTime  @default(now())
+
+  event     Event     @relation(fields: [eventId], references: [id])
+}
+
+
+// Enum for role typing
+enum Role {
+  ADMIN
+  USER
+}
