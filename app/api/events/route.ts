@@ -53,7 +53,6 @@ export async function POST(request: Request) {
         const data = await request.json();
         console.log(data)
         const validatedData = eventSchema.parse(data);
-        console.log(validatedData)
         const newEvent = await prisma.event.create({data: validatedData});
         return NextResponse.json(newEvent, { status: 201 });
     }catch (error) {
