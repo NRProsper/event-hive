@@ -4,7 +4,7 @@ import {cn} from "@/lib/utils";
 
 interface ButtonProps extends
     HTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariant> {}
+    VariantProps<typeof ButtonVariant> {}
 
 type defaultVariant = {
     variant: 'primary',
@@ -15,7 +15,7 @@ export const ButtonVariant = cva(
     'px-10 py-[15px] rounded-[5px] flex items-center justify-center gap-3', {
     variants: {
         variant: {
-            primary: 'bg-primary text-white',
+            primary: 'bg-primary text-white disabled:bg-primary/50 disabled:cursor-not-allowed',
             neutral: 'bg-white text-e-black'
         }
     },
