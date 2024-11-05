@@ -1,13 +1,16 @@
 'use client'
 
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import React from "react";
+import React, {useState} from "react";
 import Label from "@/components/ui/label";
 import Input from "@/components/ui/input";
 import Button from "@/components/ui/button";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
+import {createBooking} from "@/utils/api/bookings";
+import toast from "react-hot-toast";
+import {EventResponse} from "@/utils/types";
 
 const bookingSchema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
@@ -18,7 +21,8 @@ const bookingSchema = z.object({
 
 type BookingFormData = z.infer<typeof bookingSchema>;
 
-export default function BookingDialog({id, title} : {id:number, title:string}) {
+export default function BookingDialog({event, refetch}: {event: EventResponse, refetch: () => void}) {
+    const [isOpen, setIsOpen] = useState(false);
 
     const {
         register,
@@ -27,18 +31,25 @@ export default function BookingDialog({id, title} : {id:number, title:string}) {
     } = useForm<BookingFormData>({
         resolver: zodResolver(bookingSchema),
     });
-    const onSubmit = (data: BookingFormData) => {
-        console.log("Booking data submitted:", data);
-        // Send data to your API here
+    const onSubmit = async (data: BookingFormData) => {
+        try{
+            const bookingData = { ...data, eventId: event.id }
+            await createBooking(bookingData);
+            toast.success("Booking successful!");
+            refetch()
+            setIsOpen(false);
+        }catch (e) {
+            toast.error("Booking failed. Please try again.");
+        }
     };
 
     return(
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger className="px-10 mt-2 py-[15px] rounded-[5px] flex items-center justify-center gap-3 bg-primary text-white w-full">
                 Book Now
             </DialogTrigger>
             <DialogContent>
-                <DialogTitle className="text-e-black font-semibold text-xl text-center capitalize">Fill in to book {title}</DialogTitle>
+                <DialogTitle className="text-e-black font-semibold text-xl text-center capitalize">Fill in to book {event.title}</DialogTitle>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-4">
                     <div>
                         <Label htmlFor="name">Name</Label>
@@ -82,6 +93,7 @@ export default function BookingDialog({id, title} : {id:number, title:string}) {
                     <Button
                         type="submit"
                         variant="primary"
+                        disabled={event.seats === 0}
                     >
                         Confirm Booking
                     </Button>
