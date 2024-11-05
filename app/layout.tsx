@@ -1,6 +1,7 @@
 import type {Metadata} from "next";
 import {Poppins} from "next/font/google";
 import "./globals.css";
+import {Toaster} from "react-hot-toast";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -21,13 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${poppins.className} antialiased`}
       >
-      <main>
-          {children}
-      </main>
+      <Toaster
+          position="top-center"
+          reverseOrder={false}
+      />
+      {children}
       </body>
     </html>
   );
